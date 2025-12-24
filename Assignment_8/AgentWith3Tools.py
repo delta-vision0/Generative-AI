@@ -1,5 +1,6 @@
 from langchain.chat_models import init_chat_model
 from langchain.agents import create_agent
+from langchain.agents.middleware import wrap_model_call
 import os
 from langchain.tools import tool
 from dotenv import load_dotenv
@@ -61,11 +62,25 @@ llm = init_chat_model(
     base_url = "https://api.groq.com/openai/v1",
     api_key = os.getenv("groq_api_key")
 )
+@wrap_model_call
+def logging_middleware(request , handler):
+    """
+    logs each model req and resp for debugging.
+    """
+    print(f"requested message count : {len(request.messages)}")
+    response = handler(request)
+
+    print(f"Model Responded")
+    return response
+
 conversation = []
+
 agent = create_agent(model=llm,
                 tools =[get_weather,calculator,file_reader],
+                middleware=[logging_middleware],
                 system_prompt="you are a helpful assistant"
                 )
+
 while True:
     user_input = input("Enter Your msg : ")
     conversation.append({"role" : "user" , "content" : user_input})
