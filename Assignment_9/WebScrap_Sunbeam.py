@@ -14,7 +14,7 @@ llm = init_chat_model(
     model="llama-3.3-70b-versatile",
     model_provider="openai",
     base_url="https://api.groq.com/openai/v1",
-    api_key=os.getenv("GROQ_API_KEY")
+    api_key=os.getenv("groq_api_key")
 )
 
 def WebScrapingApp():
@@ -42,6 +42,9 @@ def WebScrapingApp():
         Return only comma-separated keywords. No explanation.
 
         Question: {user_input}
+
+        if there is any specific question regarding data in website , you should answer in detail if user asks for it.
+        i want this llm to be an expert for any data there in url given
         """
 
         keyword_response = llm.invoke(keyword_prompt)
